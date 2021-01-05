@@ -38,7 +38,8 @@ BATTERY_INFO=`acpi -b | sed -e 's/%/%%/g'`
 CPU_INFO=`grep cores /proc/cpuinfo | awk 'END {print $4 " / " NR}'`
 CPU_TEMP=`sensors -u -A | grep ^Package\ id -A1 | grep input | sed -e 's/^\s*//' | cut -d' ' -f2`
 LOGGED_USERS=`users | sed -e 's/\s/\,/g'`
-WEATHER_INFO=`curl -s "http://rss.accuweather.com/rss/liveweather_rss.asp?metric=1&locCode=EUR|UK|ec4a-2|LONDON" | sed -n '/Currently:/ s/.*: \(.*\): \([0-9]*\)\([CF]\).*/\2°\3, \1/p'`
+#WEATHER_INFO=`curl -s "http://rss.accuweather.com/rss/liveweather_rss.asp?metric=1&locCode=LONDON|ec4a%202" | sed -n '/Currently:/ s/.*: \(.*\): \([0-9]*\)\([CF]\).*/\2°\3, \1/p'`
+WEATHER_INFO=`curl -s "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2643743" | sed -n '/Today:/ s/.*Today: \(.*\)<.*/\1/p'`
 GATEWAY_IP=`ip route show | grep ^default | cut -d' ' -f3 | uniq`
 UPGRADABLE_PKG=`apt list --upgradable 2>/dev/null| grep -c upgradable`
 REBOOT_REQ="no"
