@@ -28,7 +28,7 @@ EXTERNAL_IP=`host myip.opendns.com resolver1.opendns.com | grep ^myip.opendns | 
 # the following works well but are slow
 #EXTERNAL_IP=`wget http://ipecho.net/plain -O - -q`
 #EXTERNAL_IP=`curl -s ifconfig.me`
-INTERNAL_IP=`ip -4 address show scope global | grep inet | sed -e 's/^\s*//' | cut -d' ' -f2,9`
+INTERNAL_IP=`ip -4 address show scope global | grep inet | awk '{ print $2,$NF }'`
 WIFI_CON=`nmcli -t -e no -f TYPE,CONNECTION dev | grep wifi | cut -d':' -f2`
 # the following have more details but slower or requieres root priv
 #WIFI_CON=`iwgetid`
