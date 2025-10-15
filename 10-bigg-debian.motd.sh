@@ -11,42 +11,9 @@
 # Exit on error, undefined variables, and pipe failures
 set -euo pipefail
 
-<<<<<<< HEAD
-#
-# Getting the info and storing it in variables ready to print
-#
-DATE_TIME=`date +%a\ %d\ %b\ %Y\ \/\ %X\ %Z`
-UP_TIME=`uptime -p`
-LIN_VERS=`uname -v | cut -d' ' -f4-5`
-AVG_LOAD=`cat /proc/loadavg | cut -d' ' -f1-3 | sed -e 's/\s/\ \/\ /g'`
-MEM_USAGE=`free -h | awk '/^Mem:/{print $2" / "$3" / "$4}'`
-EXTERNAL_IP=`host myip.opendns.com resolver1.opendns.com | grep ^myip.opendns | cut -d' ' -f4`
-# the following works well but are slow
-#EXTERNAL_IP=`wget http://ipecho.net/plain -O - -q`
-#EXTERNAL_IP=`curl -s ifconfig.me`
-INTERNAL_IP=`ip -4 address show scope global | grep inet | awk '{ print $2,$NF }'`
-WIFI_CON=`nmcli -t -e no -f TYPE,CONNECTION dev | grep wifi | cut -d':' -f2`
-# the following have more details but slower or requieres root priv
-#WIFI_CON=`iwgetid`
-#WIFI_CON=`nmcli -t -w 1 -f ACTIVE,SSID,RATE,DEVICE dev wifi | sed -n '/yes:/s/.*:\(.*\):\(.*\):\(.*\)/SSID: \1 Device: \3 Speed: \2/p'`
-AC_ADAPTER_INFO=`acpi -a`
-BATTERY_INFO=`acpi -b | sed -e 's/%/%%/g'`
-CPU_INFO=`grep cores /proc/cpuinfo | awk 'END {print $4 " / " NR}'`
-CPU_TEMP=`sensors -u -A | grep ^Package\ id -A1 | grep input | sed -e 's/^\s*//' | cut -d' ' -f2`
-LOGGED_USERS=`users | sed -e 's/\s/\,/g'`
-#WEATHER_INFO=`curl -s "http://rss.accuweather.com/rss/liveweather_rss.asp?metric=1&locCode=LONDON|ec4a%202" | sed -n '/Currently:/ s/.*: \(.*\): \([0-9]*\)\([CF]\).*/\2°\3, \1/p'`
-WEATHER_INFO=`curl -s "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2643743" | sed -n '/Today:/ s/.*Today: \(.*\)<.*/\1/p'`
-GATEWAY_IP=`ip route show | grep ^default | cut -d' ' -f3 | uniq`
-UPGRADABLE_PKG=`apt list --upgradable 2>/dev/null| grep -c upgradable`
-REBOOT_REQ="no"
-if [ -f /var/run/reboot-required ]; then
-  REBOOT_REQ="yes"
-fi
-=======
 # Script configuration
 readonly SCRIPT_NAME="$(basename "$0")"
 readonly SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
->>>>>>> 4c050aa (after some bash training :))
 
 # Color definitions using tput for better portability
 readonly GREEN="$(tput setaf 46)"
@@ -240,6 +207,39 @@ main() {
         ["Upgradable Packages"]="        $upgradable_packages"
         ["Reboot Required?"]="           $reboot_required"
     )
+
+    # Print system information using array for cleaner code
+    for label in "${!sys_info[@]}"; do
+        printf "%s${label}:%s\t%s\n" "$BLUE" "$STOP" "${sys_info[$label]}"
+    done
+
+    echo
+
+    # Disk utilization section
+    printf "%sDisk Utilisation           :%s\n" "$BLUE" "$STOP"
+    if command_exists df; then
+        df -h --type=ext4 2>/dev/null || df -h 2>/dev/null | head -1 && df -h 2>/dev/null | grep -E '(ext4|xfs|btrfs|ntfs|vfat)'
+    else
+        echo "Disk information not available"
+    fi
+
+    echo
+
+    # Last login section
+    printf "%sLast Login                 :%s\n" "$BLUE" "$STOP"
+    if command_exists last; then
+        last "$USER" 2>/dev/null | awk '{print "From:",$3,"on",$5,$6,$7,$8,$9,$10;if ($10!="in") {exit}}' || echo "No login history available"
+    else
+        echo "Last login information not available"
+    fi
+
+    echo
+}
+
+#######################################
+# Script entry point
+#######################################
+main "$@"
 
     # Print system information using array for cleaner code
     for label in "${!sys_info[@]}"; do
