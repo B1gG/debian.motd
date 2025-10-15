@@ -32,7 +32,7 @@ sudo sensors-detect
 ```
 
 ### Weather details
-To get those details you can choose between Accuweather or BBC as the source.
+To get those details you can choose between Accuweather or BBC as the source.<br>
 For Accuweather, go to [https://www.accuweather.com/](https://www.accuweather.com/) select your city and take a look at the address and the location code, for example for "London, London, GB" this will be **https://www.accuweather.com/en/gb/london/ec4a 2/weather-forecast/328328** here we will copy the code "london/ec4a 2" and modify to **london|ec4a%202**.
 Notice we replace the / by | and encode the space to %20.
 Replace the code in the line:
