@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 #######################################
 # Debian MOTD Script - Enhanced Version
@@ -186,32 +186,25 @@ main() {
     reboot_required="no"
     [[ -f /var/run/reboot-required ]] && reboot_required="yes"
 
-    # Display system information with improved formatting
-    # Create an array of system information for cleaner output
-    local -A sys_info=(
-        ["System Date / Time"]="         $date_time"
-        ["UpTime"]="                     $up_time"
-        ["Linux Kernel Version"]="       $kernel_version"
-        ["Battery Information"]="        $battery_info"
-        ["AC Adapter Information"]="     $ac_adapter_info"
-        ["CPU Cores/Threads"]="          $cpu_info"
-        ["CPU Temperature"]="            $cpu_temp°C"
-        ["Avg. Load (1min/5min/15min)"]=" $avg_load"
-        ["Memory (Total/Used/Avail)"]="  $mem_usage"
-        ["External IP Address"]="        $external_ip"
-        ["Internal IP Address"]="        $internal_ip"
-        ["Gateway IP Address"]="         $gateway_ip"
-        ["WiFi Connection"]="            $wifi_connection"
-        ["Logged Users"]="               $logged_users"
-        ["Weather Information"]="        $weather_info"
-        ["Upgradable Packages"]="        $upgradable_packages"
-        ["Reboot Required?"]="           $reboot_required"
-    )
-
-    # Print system information using array for cleaner code
-    for label in "${!sys_info[@]}"; do
-        printf "%s${label}:%s\t%s\n" "$BLUE" "$STOP" "${sys_info[$label]}"
-    done
+    # Print system information using a single printf statement with column formatting
+    printf "%s%-30s:%s%s\n" \
+        "$BLUE" "System Date / Time" "$STOP" "$date_time" \
+        "$BLUE" "UpTime" "$STOP" "$up_time" \
+        "$BLUE" "Linux Kernel Version" "$STOP" "$kernel_version" \
+        "$BLUE" "Battery Information" "$STOP" "$battery_info" \
+        "$BLUE" "AC Adapter Information" "$STOP" "$ac_adapter_info" \
+        "$BLUE" "CPU Cores/Threads" "$STOP" "$cpu_info" \
+        "$BLUE" "CPU Temperature" "$STOP" "$cpu_temp°C" \
+        "$BLUE" "Avg. Load (1min/5min/15min)" "$STOP" "$avg_load" \
+        "$BLUE" "Memory (Total/Used/Avail)" "$STOP" "$mem_usage" \
+        "$BLUE" "External IP Address" "$STOP" "$external_ip" \
+        "$BLUE" "Internal IP Address" "$STOP" "$internal_ip" \
+        "$BLUE" "Gateway IP Address" "$STOP" "$gateway_ip" \
+        "$BLUE" "WiFi Connection" "$STOP" "$wifi_connection" \
+        "$BLUE" "Logged Users" "$STOP" "$logged_users" \
+        "$BLUE" "Weather Information" "$STOP" "$weather_info" \
+        "$BLUE" "Upgradable Packages" "$STOP" "$upgradable_packages" \
+        "$BLUE" "Reboot Required?" "$STOP" "$reboot_required"
 
     echo
 
